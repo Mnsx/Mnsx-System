@@ -28,8 +28,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static top.mnsx.mnsx_system.utils.RedisConstants.LOGIN_USER_KEY;
-import static top.mnsx.mnsx_system.utils.RedisConstants.LOGIN_USER_TTL;
+import static top.mnsx.mnsx_system.constants.RedisConstants.LOGIN_USER_KEY;
+import static top.mnsx.mnsx_system.constants.RedisConstants.LOGIN_USER_TTL;
 
 /**
  * @BelongsProject: mnsx_book
@@ -75,7 +75,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 将用户放入LoginUser
         Long id = loginUser.getUser().getId();
-        User user = userService.query().eq("id", id).one();
+        User user = userService.queryById(id);
         UserDTO userDTO = new UserDTO();
         BeanUtil.copyProperties(user, userDTO);
         ThreadLocalUtil.add(userDTO);

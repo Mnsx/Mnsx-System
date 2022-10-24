@@ -1,6 +1,5 @@
-package top.mnsx.mnsx_system.component;
+package top.mnsx.mnsx_system.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,9 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         // 验证数据库中是否有用户信息
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getPhone, phone);
-        User user = userMapper.selectOne(wrapper);
+        User user = userMapper.selectByPhone(phone);
         if (Objects.isNull(user)) {
             throw new PasswordNotRightException();
         }

@@ -1,11 +1,12 @@
 package top.mnsx.mnsx_system.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import top.mnsx.mnsx_system.component.mybatis.annotation.AssignId;
+import top.mnsx.mnsx_system.component.mybatis.annotation.TableFill;
 
 /**
  * <p>
@@ -17,12 +18,11 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_menu")
 public class Menu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @AssignId
     private Long id;
 
     private String menuName;
@@ -35,18 +35,17 @@ public class Menu implements Serializable {
 
     private Integer status;
 
-    @TableLogic
     private Integer isDeleted;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableFill(insertFlag = true, insertMethod = "getUser")
     private Long createUser;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableFill(insertFlag = true, insertMethod = "getNow")
     private LocalDateTime createTime;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableFill(insertFlag = true, insertMethod = "getUser")
     private Long updateUser;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableFill(insertFlag = true, insertMethod = "getNow")
     private LocalDateTime updateTime;
 }

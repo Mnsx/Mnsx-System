@@ -1,7 +1,6 @@
 package top.mnsx.mnsx_system.dao;
 
 import top.mnsx.mnsx_system.entity.User;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
@@ -11,6 +10,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Mnsx_x
  * @since 2022-10-22
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper {
 
+    User selectByPhone(String phone);
+
+    Integer insertOne(User user);
+
+    User selectById(Long id);
 }

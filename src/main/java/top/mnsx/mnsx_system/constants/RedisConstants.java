@@ -1,4 +1,4 @@
-package top.mnsx.mnsx_system.utils;
+package top.mnsx.mnsx_system.constants;
 
 /**
  * @BelongsProject: mnsx_system

@@ -1,31 +1,23 @@
 package top.mnsx.mnsx_system.handler;
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
-import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
+import top.mnsx.mnsx_system.component.mybatis.handler.MetaObjectHandler;
 
 import java.time.LocalDateTime;
 
 /**
  * @BelongsProject: mnsx_system
  * @User: Mnsx_x
- * @CreateTime: 2022/10/22 16:05
+ * @CreateTime: 2022/10/23 16:53
  * @Description:
  */
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
-    @Override
-    public void insertFill(MetaObject metaObject) {
-        metaObject.setValue("createUser", ThreadLocalUtil.get() != null ? ThreadLocalUtil.get().getId() : 0);
-        metaObject.setValue("createTime", LocalDateTime.now());
-        metaObject.setValue("updateUser", ThreadLocalUtil.get() != null ? ThreadLocalUtil.get().getId() : 0);
-        metaObject.setValue("updateTime", LocalDateTime.now());
+    public Long getUser() {
+        return 1L;
     }
 
-    @Override
-    public void updateFill(MetaObject metaObject) {
-        metaObject.setValue("updateUser", ThreadLocalUtil.get().getId());
-        metaObject.setValue("updateTime", LocalDateTime.now());
+    public LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
 }

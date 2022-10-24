@@ -18,7 +18,6 @@ import top.mnsx.mnsx_system.dao.UserMapper;
 import top.mnsx.mnsx_system.exception.LoginFailException;
 import top.mnsx.mnsx_system.exception.PhoneNotFormatException;
 import top.mnsx.mnsx_system.service.UserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.mnsx.mnsx_system.utils.JWTUtil;
 import top.mnsx.mnsx_system.utils.RegexUtil;
@@ -30,10 +29,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static top.mnsx.mnsx_system.utils.RedisConstants.*;
+import static top.mnsx.mnsx_system.constants.RedisConstants.*;
 
 /**
  * <p>
@@ -44,12 +42,14 @@ import static top.mnsx.mnsx_system.utils.RedisConstants.*;
  * @since 2022-10-22
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl implements UserService {
 
     @Resource
     private AuthenticationManager authenticationManager;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public String sendCodeDemo(String phone) {
@@ -127,5 +127,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userDTO.setId(null);
         // 返回
         return JSON.toJSONString(ResultMap.ok(userDTO));
+    }
+
+    @Override
+    public User queryByPhone(String phone) {
+       return userMapper.selectByPhone(phone);
+    }
+
+    @Override
+    public void save(User user) {
+        userMapper.insertOne(user);
+    }
+
+    @Override
+    public User queryById(Long id) {
+        return userMapper.selectById(id);
     }
 }

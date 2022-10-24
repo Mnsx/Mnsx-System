@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import top.mnsx.mnsx_system.dto.LoginFormDTO;
+import top.mnsx.mnsx_system.entity.User;
 import top.mnsx.mnsx_system.service.UserService;
 import top.mnsx.mnsx_system.service.impl.UserServiceImpl;
 

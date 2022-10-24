@@ -3,7 +3,6 @@ package top.mnsx.mnsx_system.service.impl;
 import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.dao.RoleMapper;
 import top.mnsx.mnsx_system.service.RoleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +14,6 @@ import org.springframework.stereotype.Service;
  * @since 2022-10-22
  */
 @Service
-public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
+public class RoleServiceImpl implements RoleService {
 
 }

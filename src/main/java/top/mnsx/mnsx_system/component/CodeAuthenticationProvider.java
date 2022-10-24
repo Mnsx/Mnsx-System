@@ -2,7 +2,6 @@ package top.mnsx.mnsx_system.component;
 
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -13,8 +12,8 @@ import top.mnsx.mnsx_system.entity.LoginUser;
 import top.mnsx.mnsx_system.entity.User;
 import top.mnsx.mnsx_system.exception.CodeNotRightException;
 import top.mnsx.mnsx_system.service.UserService;
-import top.mnsx.mnsx_system.utils.RedisConstants;
-import top.mnsx.mnsx_system.utils.SystemConstants;
+import top.mnsx.mnsx_system.constants.RedisConstants;
+import top.mnsx.mnsx_system.constants.SystemConstants;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -46,7 +45,7 @@ public class CodeAuthenticationProvider implements AuthenticationProvider {
             throw new CodeNotRightException();
         }
         // 一致，根据手机号查询用户是否存在
-        User user = userService.query().eq("phone", phone).one();
+        User user = userService.queryByPhone(phone);
         if (user == null) {
             // 不存在，存储用户到数据库
             user = createUserWithPhone(phone);
