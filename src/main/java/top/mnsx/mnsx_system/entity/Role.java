@@ -39,9 +39,9 @@ public class Role implements Serializable {
     @TableFill(insertFlag = true, insertMethod = "getNow")
     private LocalDateTime createTime;
 
-    @TableFill(insertFlag = true, insertMethod = "getUser")
+    @TableFill(insertFlag = true, insertMethod = "getUser", updateFlag = true, updateMethod = "getUser")
     private Long updateUser;
 
-    @TableFill(insertFlag = true, insertMethod = "getNow")
+    @TableFill(insertFlag = true, insertMethod = "getNow", updateFlag = true, updateMethod = "getNow")
     private LocalDateTime updateTime;
 }

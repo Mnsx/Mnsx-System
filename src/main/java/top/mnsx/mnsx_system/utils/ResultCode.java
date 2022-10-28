@@ -18,6 +18,12 @@ public enum ResultCode {
     CODE_NOT_RIGHT(5004, "验证码错误"),
     PASSWORD_NOT_RIGHT(5005, "密码错误"),
     ILLEGAL_TOKEN(5006, "token非法"),
+    // 用户
+    USER_NOT_EXIST(5100, "用户不存在"),
+    User_HAS_EXIST(5101, "用户已经存在"),
+    // 角色
+    ROLE_HAS_EXIST(5200, "角色已经存在"),
+    ROLE_NOT_EXIST(5201, "角色不存在"),
     // 服务器内部问题
     INNER_ERROR(500, "服务器内部问题，请联系管理员");
 

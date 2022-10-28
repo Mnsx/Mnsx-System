@@ -2,6 +2,79 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.mnsx.mnsx_system.dao.MenuMapper">
 
+    <resultMap id="MenuMap" type="menu">
+        <id column="id" property="id"/>
+        <result column="menu_name" property="menuName"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        tb_menu (id, menu_name, create_user, create_time, update_user, update_time
+        <if test="content != null and content != ''">
+            , content
+        </if>
+        <if test="router != null and router != ''">
+            , router
+        </if>
+        <if test="roleKey != null and roleKey != ''">
+            , role_key
+        </if>
+        <if test="status != null">
+            , status
+        </if>
+        )
+        values (#{id}, #{menuName}, #{createUser}, #{createTime}, #{updateUser}, #{updateTime}
+        <if test="content != null and content != ''">
+            , #{content}
+        </if>
+        <if test="router != null and router != ''">
+            , #{router}
+        </if>
+        <if test="roleKey != null and roleKey != ''">
+            , #{roleKey}
+        </if>
+        <if test="status != null">
+            , #{status}
+        </if>
+        )
+    </insert>
+
+    <update id="update">
+        update
+        tb_menu
+        set
+        <if test="menuName != null and menuName != ''">
+            menu_name = #{menuName},
+        </if>
+        <if test="content != null and content != ''">
+            content = #{content},
+        </if>
+        <if test="router != null and router != ''">
+            router = #{router},
+        </if>
+        <if test="roleKey != null and roleKey != ''">
+            role_key = #{roleKey},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        where
+        id = #{id}
+        and
+        is_deleted = 0
+    </update>
+
+    <delete id="delete">
+        update
+            tb_menu
+        set
+            is_deleted = 1
+        where
+            id = #{id}
+    </delete>
+
     <select id="selectPermsByUserId" resultType="java.lang.String">
         select
             distinct m.role_key
@@ -15,4 +88,28 @@
           and r.status = 0
           and m.status = 0
     </select>
+    <select id="selectByPage" resultMap="MenuMap">
+        select
+        menu_name, content, router, role_key, status
+        from
+        tb_menu
+        where
+        <if test="menuName != null and menuName != ''">
+            menu_name = #{menuName} and
+        </if>
+        is_deleted = 0
+        order by
+        update_time desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+    <select id="selectById" resultMap="MenuMap">
+        select
+            menu_name, content, router, role_key, status
+        from
+            tb_menu
+        where
+            is_deleted = 0
+    </select>
+
+
 </mapper>

@@ -2,4 +2,83 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.mnsx.mnsx_system.dao.RoleMapper">
 
+    <resultMap id="roleMap" type="role">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName"/>
+    </resultMap>
+
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        tb_role (id, role_name, create_user, create_time, update_user, update_time
+        <if test="content != null and content != ''">
+            , content
+        </if>
+        <if test="status != null">
+            , status
+        </if>
+        )
+        values (#{id}, #{roleName}, #{createUser}, #{createTime}, #{updateUser}, #{updateTime}
+        <if test="content != null and content != ''">
+            , #{content}
+        </if>
+        <if test="status != null">
+            , #{status}
+        </if>
+        )
+    </insert>
+
+    <update id="updateOne">
+        update
+        tb_role
+        set
+        <if test="roleName != null and roleName != ''">
+            role_name = #{roleName},
+        </if>
+        <if test="content != null and content != ''">
+            content = #{content},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        where
+        id = #{id}
+        and
+        is_deleted = 0;
+    </update>
+
+    <delete id="deleteOne">
+        update
+            tb_role
+        set
+            is_deleted = 1
+        where
+            id = #{id}
+    </delete>
+
+    <select id="selectByPage" resultMap="roleMap">
+        select
+        id, role_name, content, status
+        from
+        tb_role
+        where
+        <if test="roleName != null and roleName != ''">
+            role_name = #{roleName} and
+        </if>
+        is_deleted = 0
+        order by
+        update_time desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+    <select id="selectById" resultMap="roleMap">
+        select
+            id, role_name, content, status
+        from
+            tb_role
+        where
+            id = #{id}
+          and
+            is_deleted = 0
+    </select>
 </mapper>

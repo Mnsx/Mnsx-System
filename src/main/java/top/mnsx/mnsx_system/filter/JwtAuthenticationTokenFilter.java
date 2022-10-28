@@ -87,7 +87,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         // 刷新redis中的过期时间
-        stringRedisTemplate.expire(LOGIN_USER_KEY, LOGIN_USER_TTL, TimeUnit.MINUTES);
+        stringRedisTemplate.expire(LOGIN_USER_KEY + id, LOGIN_USER_TTL, TimeUnit.MINUTES);
 
         filterChain.doFilter(request, response);
     }

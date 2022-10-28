@@ -1,7 +1,10 @@
 package top.mnsx.mnsx_system.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import top.mnsx.mnsx_system.component.mybatis.handler.MetaObjectHandler;
+import top.mnsx.mnsx_system.dto.UserDTO;
+import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
 
 import java.time.LocalDateTime;
 
@@ -12,9 +15,11 @@ import java.time.LocalDateTime;
  * @Description:
  */
 @Component
+@Slf4j
 public class MyMetaObjectHandler implements MetaObjectHandler {
     public Long getUser() {
-        return 1L;
+        UserDTO userDTO = ThreadLocalUtil.get();
+        return userDTO.getId();
     }
 
     public LocalDateTime getNow() {

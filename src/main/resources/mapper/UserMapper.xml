@@ -6,11 +6,77 @@
         <id column="id" property="id"/>
         <result column="nick_name" property="nickName" javaType="String"/>
     </resultMap>
-    <insert id="insertOne" parameterType="top.mnsx.mnsx_system.entity.User">
+
+    <insert id="insertOne" parameterType="top.mnsx.mnsx_system.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into
-            tb_user (id, phone, nick_name, create_user, create_time, update_user, update_time)
-        values (#{id}, #{phone}, #{nickName}, #{createUser}, #{createTime}, #{updateUser}, #{updateTime})
+        tb_user (id, phone, nick_name, create_user, create_time, update_user, update_time
+        <if test="email != null and email != ''">
+            , email
+        </if>
+        <if test="password != null and email != ''">
+            , password
+        </if>
+        <if test="icon != null and icon != ''">
+            , icon
+        </if>
+        <if test="status != null and status != ''">
+            , status
+        </if>
+        )
+        values (#{id}, #{phone}, #{nickName}, #{createUser}, #{createTime}, #{updateUser}, #{updateTime}
+        <if test="email != null and email != ''">
+            , #{email}
+        </if>
+        <if test="password != null and email != ''">
+            , #{password}
+        </if>
+        <if test="icon != null and icon != ''">
+            , #{icon}
+        </if>
+        <if test="status != null">
+            , #{status}
+        </if>
+        )
     </insert>
+
+    <update id="updateOne">
+        update
+        tb_user
+        set
+        <if test="phone != null and phone != ''">
+            phone = #{phone},
+        </if>
+        <if test="email != null and email != ''">
+            email = #{email},
+        </if>
+        <if test="nickName != null and nickName != ''">
+            nick_name = #{nickName},
+        </if>
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        <if test="icon != null and icon != ''">
+            icon = #{icon},
+        </if>
+        <if test="status != null">
+            status = #{status},
+        </if>
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        where
+        id = #{id}
+        and
+        is_deleted = 0
+    </update>
+
+    <delete id="deleteOne">
+        update
+            tb_user
+        set
+            is_deleted = 1
+        where
+            id = #{id}
+    </delete>
 
     <select id="selectByPhone" resultMap="userMap">
         select
@@ -21,6 +87,8 @@
             phone = #{phone}
           and
             status = 0
+          and
+            is_deleted = 0
     </select>
     <select id="selectById" resultMap="userMap">
         select
@@ -31,5 +99,28 @@
             id = #{id}
           and
             status = 0
+          and
+            is_deleted = 0
+    </select>
+    <select id="selectByPage" resultMap="userMap">
+        select
+        id, phone, email, nick_name, icon, status
+        from
+        tb_user
+        where
+        is_deleted = 0
+        <if test="user.phone != null and user.phone != ''">
+            and phone = #{user.phone}
+        </if>
+        <if test="user.email != null and user.email != ''">
+            and email = #{user.email}
+        </if>
+        <if test="user.nickName != null and user.nickName != ''">
+            and nick_name = #{user.nickName}
+        </if>
+        order by
+        update_time desc
+        limit
+        ${pageNum}, #{pageSize}
     </select>
 </mapper>
