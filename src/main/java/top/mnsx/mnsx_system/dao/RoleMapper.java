@@ -1,6 +1,8 @@
 package top.mnsx.mnsx_system.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
+import top.mnsx.mnsx_system.entity.Menu;
 import top.mnsx.mnsx_system.entity.Role;
 
 import java.util.List;
@@ -52,4 +54,32 @@ public interface RoleMapper {
      * @return 返回数据
      */
     Role selectById(Long id);
+
+    /**
+     * 通过用户id查询角色信息
+     * @param userId 用户id
+     * @return 角色信息
+     */
+    Role selectByUserId(Long userId);
+
+    /**
+     * 根据角色编号查询菜单信息
+     * @param roleId 角色编号
+     * @return 返回菜单信息集合
+     */
+    List<Menu> selectRoleMenuByRoleId(Long roleId);
+
+    /**
+     * 批量插入角色菜单
+     * @param roleId 角色编号
+     * @param newMenu 新的角色菜单
+     */
+    void insertRoleMenu(@Param("roleId") Long roleId, @Param("newMenu") List<Long> newMenu);
+
+    /**
+     * 批量删除角色菜单
+     * @param roleId 角色编号
+     * @param deleteMenu 需要删除的角色菜单
+     */
+    void deleteRoleMenu(@Param("roleId") Long roleId, @Param("deleteMenu") List<Long> deleteMenu);
 }

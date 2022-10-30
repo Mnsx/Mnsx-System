@@ -38,6 +38,11 @@
         </if>
         )
     </insert>
+    <insert id="insertUserRole">
+        insert into
+            tb_user_role (user_id, role_id)
+        values (#{userId}, #{roleId})
+    </insert>
 
     <update id="updateOne">
         update
@@ -67,6 +72,14 @@
         id = #{id}
         and
         is_deleted = 0
+    </update>
+    <update id="updateUserRole">
+        update
+            tb_user_role
+        set
+            role_id = #{roleId}
+        where
+            user_id = #{userId}
     </update>
 
     <delete id="deleteOne">
@@ -122,5 +135,8 @@
         update_time desc
         limit
         ${pageNum}, #{pageSize}
+    </select>
+    <select id="selectUserRoleById" resultMap="top.mnsx.mnsx_system.dao.RoleMapper.roleMap">
+        select *
     </select>
 </mapper>

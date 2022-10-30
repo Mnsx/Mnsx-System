@@ -26,6 +26,14 @@
         </if>
         )
     </insert>
+    <insert id="insertRoleMenu">
+        insert into
+        tb_role_menu (role_id, menu_id)
+        values
+        <foreach collection="newMenu" item="item" separator=",">
+            (#{roleId}, #{item})
+        </foreach>
+    </insert>
 
     <update id="updateOne">
         update
@@ -56,6 +64,16 @@
         where
             id = #{id}
     </delete>
+    <delete id="deleteRoleMenu">
+        delete from
+        tb_role_menu
+        where
+        role_id = #{roleId}
+        and
+        <foreach collection="deleteMenu" item="item" separator="and">
+            menu_id = #{item}
+        </foreach>
+    </delete>
 
     <select id="selectByPage" resultMap="roleMap">
         select
@@ -78,6 +96,33 @@
             tb_role
         where
             id = #{id}
+          and
+            is_deleted = 0
+    </select>
+    <select id="selectByUserId" resultMap="roleMap">
+        select
+            id, role_name, content, status
+        from
+            tb_role as r
+                right join
+            tb_user_role as ur
+            on
+                r.id = ur.role_id
+        where
+            ur.user_id = #{userId}
+          and
+            r.is_deleted = 0
+    </select>
+    <select id="selectRoleMenuByRoleId" resultMap="top.mnsx.mnsx_system.dao.MenuMapper.MenuMap">
+        select
+            id, menu_name, content, router, role_key, status
+        from tb_menu as m
+                 right join
+             tb_role_menu as rm
+             on
+                 m.id = rm.menu_id
+        where
+            role_id = #{roleId}
           and
             is_deleted = 0
     </select>

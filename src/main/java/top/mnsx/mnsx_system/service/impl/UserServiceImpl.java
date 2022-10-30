@@ -11,22 +11,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import top.mnsx.mnsx_system.component.CodeAuthenticationToken;
 import top.mnsx.mnsx_system.dto.LoginFormDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
+import top.mnsx.mnsx_system.dto.UserSysDTO;
 import top.mnsx.mnsx_system.entity.LoginUser;
+import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.entity.User;
 import top.mnsx.mnsx_system.dao.UserMapper;
-import top.mnsx.mnsx_system.exception.LoginFailException;
-import top.mnsx.mnsx_system.exception.PhoneNotFormatException;
-import top.mnsx.mnsx_system.exception.UserHasExistException;
-import top.mnsx.mnsx_system.exception.UserNotExistException;
+import top.mnsx.mnsx_system.exception.*;
+import top.mnsx.mnsx_system.service.RoleService;
 import top.mnsx.mnsx_system.service.UserService;
 import org.springframework.stereotype.Service;
 import top.mnsx.mnsx_system.utils.JWTUtil;
 import top.mnsx.mnsx_system.utils.RegexUtil;
-import top.mnsx.mnsx_system.utils.ResultMap;
 import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
 
 import javax.annotation.Resource;
@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static top.mnsx.mnsx_system.constants.RedisConstants.*;
 
@@ -58,6 +59,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Resource
+    private RoleService roleService;
 
     @Override
     public String sendCodeDemo(String phone) {
@@ -142,7 +145,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long save(User user) {
+    @Transactional
+    public Long save(User user, Long roleId) {
         String phone = user.getPhone();
         User result = queryByPhone(phone);
         if (result != null) {
@@ -152,6 +156,8 @@ public class UserServiceImpl implements UserService {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
         userMapper.insertOne(user);
+        System.out.println(user.getId());
+        this.saveUserRole(user.getId(), roleId);
         return user.getId();
     }
 
@@ -161,10 +167,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> page(User user, Integer pageNum, Integer pageSize) {
+    public Page<UserSysDTO> page(User user, Integer pageNum, Integer pageSize) {
         List<User> users = userMapper.selectByPage(user, pageNum - 1, pageSize);
-        return new Page<User>()
-                .setData(users)
+        List<UserSysDTO> userSysDTOS = users.stream().map((item) -> {
+            UserSysDTO userSysDTO = new UserSysDTO();
+            Role role = roleService.queryByUserId(item.getId());
+            System.out.println(role);
+            userSysDTO.setRoleName(role.getRoleName());
+            userSysDTO.setUser(item);
+            return userSysDTO;
+        }).collect(Collectors.toList());
+        return new Page<UserSysDTO>()
+                .setData(userSysDTOS)
                 .setCount((long) users.size());
     }
 
@@ -187,5 +201,27 @@ public class UserServiceImpl implements UserService {
             throw new UserNotExistException();
         }
         userMapper.deleteOne(id);
+    }
+
+    @Override
+    public void changeUserRoleId(Long userId, Long roleId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new UserNotExistException();
+        }
+        Role role = roleService.queryById(roleId);
+        if (role == null) {
+            throw new RoleNotExistException();
+        }
+        userMapper.updateUserRole(userId, roleId);
+    }
+
+    @Override
+    public void saveUserRole(Long userId, Long roleId) {
+        Role role = roleService.queryById(roleId);
+        if (role == null) {
+            throw new RoleNotExistException();
+        }
+        userMapper.insertUserRole(userId, roleId);
     }
 }

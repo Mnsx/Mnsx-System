@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import top.mnsx.mnsx_system.dto.LoginFormDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
+import top.mnsx.mnsx_system.dto.UserSysDTO;
 import top.mnsx.mnsx_system.entity.User;
 import top.mnsx.mnsx_system.service.UserService;
 import top.mnsx.mnsx_system.utils.ResultMap;
@@ -77,9 +78,10 @@ public class UserController {
      * @param user 用户信息
      * @return 返回用户Id
      */
-    @PostMapping("/sys")
-    public String save(@RequestBody User user) {
-        Long userId = userService.save(user);
+    @PostMapping("/sys/{roleId}")
+    public String save(@RequestBody User user,
+                       @PathVariable("roleId") Long roleId) {
+        Long userId = userService.save(user, roleId);
         return JSON.toJSONString(ResultMap.ok(userId));
     }
 
@@ -94,7 +96,7 @@ public class UserController {
     public String getPage(@RequestBody User user,
                           @PathVariable("pageNum") Integer pageNum,
                           @PathVariable("pageSize") Integer pageSize) {
-        Page<User> page = userService.page(user, pageNum, pageSize);
+        Page<UserSysDTO> page = userService.page(user, pageNum, pageSize);
         return JSON.toJSONString(ResultMap.ok(page));
     }
 
@@ -109,9 +111,27 @@ public class UserController {
         return JSON.toJSONString(ResultMap.ok());
     }
 
+    /**
+     * 删除用户数据
+     * @param id 编号
+     * @return void
+     */
     @DeleteMapping("/sys/{id}")
     public String remove(@PathVariable Long id) {
         userService.removeOne(id);
+        return JSON.toJSONString(ResultMap.ok());
+    }
+
+    /**
+     * 更改用户角色
+     * @param roleId 角色编号
+     * @return void
+     */
+    @PutMapping("/sys/role/{userId}/{roleId}")
+    public String changeUserRoleId(@PathVariable("roleId") Long roleId,
+                                   @PathVariable("userId") Long userId) {
+        userService.changeUserRoleId(userId, roleId);
+
         return JSON.toJSONString(ResultMap.ok());
     }
 }

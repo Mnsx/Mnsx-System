@@ -1,6 +1,7 @@
 package top.mnsx.mnsx_system.dao;
 
 import org.apache.ibatis.annotations.Param;
+import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.entity.User;
 
 import java.util.List;
@@ -59,4 +60,25 @@ public interface UserMapper {
      * @return vod
      */
     Integer deleteOne(Long id);
+
+    /**
+     * 更改用户的角色
+     * @param userId 用户编号
+     * @param roleId 角色编号
+     */
+    void updateUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    /**
+     * 插入用户角色
+     * @param userId 用户信息
+     * @param roleId 角色信息
+     */
+    void insertUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    /**
+     * 通过用户编号查询角色信息
+     * @param userId 用户编号
+     * @return 返回角色信息
+     */
+    Role selectUserRoleById(Long userId);
 }

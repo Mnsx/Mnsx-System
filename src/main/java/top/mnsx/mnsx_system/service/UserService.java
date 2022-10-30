@@ -3,6 +3,8 @@ package top.mnsx.mnsx_system.service;
 import top.mnsx.mnsx_system.dto.LoginFormDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
+import top.mnsx.mnsx_system.dto.UserSysDTO;
+import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.entity.User;
 
 import java.util.List;
@@ -52,8 +54,9 @@ public interface UserService {
     /**
      * 保存用户
      * @param user 用户
+     * @param roleId 角色编号
      */
-    Long save(User user);
+    Long save(User user, Long roleId);
 
     /**
      * 通过id获取用户信息
@@ -69,7 +72,7 @@ public interface UserService {
      * @param pageSize 每页条数
      * @return 返回Page
      */
-    Page<User> page(User user, Integer pageNum, Integer pageSize);
+    Page<UserSysDTO> page(User user, Integer pageNum, Integer pageSize);
 
     /**
      * 更改用户信息
@@ -82,4 +85,18 @@ public interface UserService {
      * @param id 用户编号
      */
     void removeOne(Long id);
+
+    /**
+     * 更改用户的角色
+     * @param userId 用户编号
+     * @param roleId 角色编号
+     */
+    void changeUserRoleId(Long userId, Long roleId);
+
+    /**
+     * 保存用户的角色
+     * @param userId 用户编号
+     * @param roleId 角色编号
+     */
+    void saveUserRole(Long userId, Long roleId);
 }

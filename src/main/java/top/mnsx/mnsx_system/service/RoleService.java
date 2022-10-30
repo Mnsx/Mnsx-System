@@ -3,6 +3,8 @@ package top.mnsx.mnsx_system.service;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.Role;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -40,4 +42,25 @@ public interface RoleService {
      * @param id 编号
      */
     void remove(Long id);
+
+    /**
+     * 根据角色编号搜索角色
+     * @param roleId 角色编号
+     * @return 返回角色信息
+     */
+    Role queryById(Long roleId);
+
+    /**
+     * 通过用户Id获取角色信息
+     * @param id 用户编号
+     * @return 返回角色信息
+     */
+    Role queryByUserId(Long id);
+
+    /**
+     * 更改角色对应的菜单信息
+     * @param roleId 角色编号
+     * @param menuId 菜单编号
+     */
+    void diffMenu(Long roleId, List<Long> menuId);
 }

@@ -2,12 +2,12 @@ spring:
   application:
     name: mnsx_system
   datasource:
-    url: jdbc:mysql://192.168.32.130:3306/mnsx_system?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://mnsx.top:3306/mnsx_system?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 123123
   redis:
-    host: 192.168.32.130
+    host: mnsx.top
     port: 6379
     password: 123123
     lettuce:
