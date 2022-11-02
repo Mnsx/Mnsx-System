@@ -4,8 +4,8 @@ import top.mnsx.mnsx_system.dto.LoginFormDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
 import top.mnsx.mnsx_system.dto.UserSysDTO;
-import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.entity.User;
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 
 import java.util.List;
 
@@ -72,7 +72,15 @@ public interface UserService {
      * @param pageSize 每页条数
      * @return 返回Page
      */
-    Page<UserSysDTO> page(User user, Integer pageNum, Integer pageSize);
+    Page<UserSysDTO> page(User user, Integer pageNum, Long pageSize);
+
+    /**
+     * 获取需要导出的数据
+     * @param pageNum  开始页数
+     * @param total 条数
+     * @return 集合
+     */
+    List<ExportUserDTO> getExportInfo(Integer pageNum, Long total);
 
     /**
      * 更改用户信息
@@ -82,9 +90,9 @@ public interface UserService {
 
     /**
      * 逻辑删除用户
-     * @param id 用户编号
+     * @param ids 用户编号
      */
-    void removeOne(Long id);
+    void removeOne(Long[] ids);
 
     /**
      * 更改用户的角色
@@ -99,4 +107,6 @@ public interface UserService {
      * @param roleId 角色编号
      */
     void saveUserRole(Long userId, Long roleId);
+
+    void saveUnchecked(User user, Long defaultRoleId);
 }

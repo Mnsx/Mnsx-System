@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     public Long getUser() {
         UserDTO userDTO = ThreadLocalUtil.get();
-        return userDTO.getId();
+        return userDTO == null ? 0 : userDTO.getId();
     }
 
     public LocalDateTime getNow() {

@@ -46,7 +46,7 @@ public interface UserMapper {
      */
     List<User> selectByPage(@Param("user") User user,
                             @Param("pageNum") Integer pageNum,
-                            @Param("pageSize") Integer pageSize);
+                            @Param("pageSize") Long pageSize);
 
     /**
      * 更新用户信息
@@ -56,10 +56,10 @@ public interface UserMapper {
 
     /**
      * 逻辑删除用户
-     * @param id 用户编号
+     * @param ids 用户编号
      * @return vod
      */
-    Integer deleteOne(Long id);
+    Integer deleteOne(@Param("ids") Long[] ids);
 
     /**
      * 更改用户的角色
@@ -74,11 +74,4 @@ public interface UserMapper {
      * @param roleId 角色信息
      */
     void insertUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
-
-    /**
-     * 通过用户编号查询角色信息
-     * @param userId 用户编号
-     * @return 返回角色信息
-     */
-    Role selectUserRoleById(Long userId);
 }

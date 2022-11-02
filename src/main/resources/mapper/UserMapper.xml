@@ -19,7 +19,7 @@
         <if test="icon != null and icon != ''">
             , icon
         </if>
-        <if test="status != null and status != ''">
+        <if test="status != null">
             , status
         </if>
         )
@@ -83,12 +83,14 @@
     </update>
 
     <delete id="deleteOne">
-        update
+            update
             tb_user
-        set
+            set
             is_deleted = 1
-        where
+            where
+        <foreach collection="ids" item="id" separator="or">
             id = #{id}
+        </foreach>
     </delete>
 
     <select id="selectByPhone" resultMap="userMap">
@@ -135,8 +137,5 @@
         update_time desc
         limit
         ${pageNum}, #{pageSize}
-    </select>
-    <select id="selectUserRoleById" resultMap="top.mnsx.mnsx_system.dao.RoleMapper.roleMap">
-        select *
     </select>
 </mapper>

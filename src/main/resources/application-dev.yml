@@ -16,6 +16,12 @@ spring:
         max-idle: 10
         min-idle: 1
         time-between-eviction-runs: 10s
+  rabbitmq:
+    host: mnsx.top
+    virtual-host: center
+    username: root
+    password: 123123
+
 server:
   port: 8080
 mybatis:

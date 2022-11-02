@@ -33,8 +33,6 @@ public class CodeAuthenticationProvider implements AuthenticationProvider {
     @Resource
     private MenuMapper menuMapper;
 
-    private final static Long DEFAULT_ROLE_ID = 1586619623532294144L;
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String phone = (String) authentication.getPrincipal();
@@ -73,7 +71,7 @@ public class CodeAuthenticationProvider implements AuthenticationProvider {
         user.setPhone(phone);
         user.setNickName(SystemConstants.USER_NICK_NAME_PREFIX + RandomUtil.randomString(7));
         // 保存用户
-        userService.save(user, DEFAULT_ROLE_ID);
+        userService.save(user, SystemConstants.DEFAULT_ROLE_ID);
         return user;
     }
 

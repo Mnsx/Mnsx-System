@@ -2,6 +2,8 @@ package top.mnsx.mnsx_system.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.mnsx.mnsx_system.component.mybatis.annotation.AssignId;

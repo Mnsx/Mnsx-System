@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import io.micrometer.core.instrument.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,13 +29,11 @@ import org.springframework.stereotype.Service;
 import top.mnsx.mnsx_system.utils.JWTUtil;
 import top.mnsx.mnsx_system.utils.RegexUtil;
 import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -156,7 +155,6 @@ public class UserServiceImpl implements UserService {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         }
         userMapper.insertOne(user);
-        System.out.println(user.getId());
         this.saveUserRole(user.getId(), roleId);
         return user.getId();
     }
@@ -167,7 +165,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserSysDTO> page(User user, Integer pageNum, Integer pageSize) {
+    public Page<UserSysDTO> page(User user, Integer pageNum, Long pageSize) {
         List<User> users = userMapper.selectByPage(user, pageNum - 1, pageSize);
         List<UserSysDTO> userSysDTOS = users.stream().map((item) -> {
             UserSysDTO userSysDTO = new UserSysDTO();
@@ -183,6 +181,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<ExportUserDTO> getExportInfo(Integer pageNum, Long total) {
+        List<User> users = userMapper.selectByPage(new User(), pageNum - 1, total);
+        return users.stream().map((item) -> {
+                ExportUserDTO exportUserVO = new ExportUserDTO();
+                BeanUtils.copyProperties(item, exportUserVO);
+                return exportUserVO;
+            }).collect(Collectors.toList());
+    }
+
+    @Override
     public void modifyOne(User user) {
         User result = queryById(user.getId());
         if (result == null) {
@@ -195,12 +203,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeOne(Long id) {
-        User user = queryById(id);
-        if (user == null) {
-            throw new UserNotExistException();
-        }
-        userMapper.deleteOne(id);
+    public void removeOne(Long[] ids) {
+        Arrays.stream(ids).forEach((item) -> {
+            User user = queryById(item);
+            if (user == null) {
+                throw new UserNotExistException();
+            }
+        });
+        userMapper.deleteOne(ids);
     }
 
     @Override
@@ -223,5 +233,15 @@ public class UserServiceImpl implements UserService {
             throw new RoleNotExistException();
         }
         userMapper.insertUserRole(userId, roleId);
+    }
+
+    @Override
+    public void saveUnchecked(User user, Long defaultRoleId) {
+        String phone = user.getPhone();
+        User result = queryByPhone(phone);
+        if (result == null) {
+            userMapper.insertOne(user);
+            this.saveUserRole(user.getId(), defaultRoleId);
+        }
     }
 }

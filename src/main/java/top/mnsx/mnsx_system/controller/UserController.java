@@ -3,18 +3,37 @@ package top.mnsx.mnsx_system.controller;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
+import top.mnsx.mnsx_system.constants.SystemConstants;
 import top.mnsx.mnsx_system.dto.LoginFormDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
 import top.mnsx.mnsx_system.dto.UserSysDTO;
 import top.mnsx.mnsx_system.entity.User;
+import top.mnsx.mnsx_system.exception.UserHasExistException;
 import top.mnsx.mnsx_system.service.UserService;
+import top.mnsx.mnsx_system.service.impl.ExcelServiceImpl;
 import top.mnsx.mnsx_system.utils.ResultMap;
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -30,6 +49,8 @@ import java.util.List;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private ExcelServiceImpl excelService;
 
     /**
      * 发送验证码
@@ -38,6 +59,7 @@ public class UserController {
      */
     @GetMapping("/code/{phone}")
     public String sendCodeDemo(@PathVariable String phone) {
+        // TODO: 2022/11/2 短信服务
         String code = userService.sendCodeDemo(phone);
         return JSON.toJSONString(ResultMap.ok(code));
     }
@@ -78,6 +100,7 @@ public class UserController {
      * @param user 用户信息
      * @return 返回用户Id
      */
+//    @PreAuthorize("hasAuthority('sys:user:')")
     @PostMapping("/sys/{roleId}")
     public String save(@RequestBody User user,
                        @PathVariable("roleId") Long roleId) {
@@ -95,7 +118,7 @@ public class UserController {
     @GetMapping("/sys/page/{pageNum}/{pageSize}")
     public String getPage(@RequestBody User user,
                           @PathVariable("pageNum") Integer pageNum,
-                          @PathVariable("pageSize") Integer pageSize) {
+                          @PathVariable("pageSize") Long pageSize) {
         Page<UserSysDTO> page = userService.page(user, pageNum, pageSize);
         return JSON.toJSONString(ResultMap.ok(page));
     }
@@ -113,12 +136,12 @@ public class UserController {
 
     /**
      * 删除用户数据
-     * @param id 编号
+     * @param ids 编号
      * @return void
      */
-    @DeleteMapping("/sys/{id}")
-    public String remove(@PathVariable Long id) {
-        userService.removeOne(id);
+    @DeleteMapping("/sys")
+    public String remove(@RequestBody Long[] ids) {
+        userService.removeOne(ids);
         return JSON.toJSONString(ResultMap.ok());
     }
 
@@ -133,6 +156,31 @@ public class UserController {
         userService.changeUserRoleId(userId, roleId);
 
         return JSON.toJSONString(ResultMap.ok());
+    }
+
+    @GetMapping("/sys/ex/{pageNum}/{pageSize}")
+    public String exportToExcel(@PathVariable("pageNum") Integer pageNum,
+                                @PathVariable("pageSize") Long total,
+                                HttpServletResponse response) {
+        List<ExportUserDTO> exportInfo = userService.getExportInfo(pageNum, total);
+        excelService.writeExcel(response, "user", () -> exportInfo);
+        return JSON.toJSONString(ResultMap.ok());
+    }
+
+    @PostMapping("/sys/im")
+    public String importFromExcel(MultipartFile file) throws IOException {
+        log.info("{}", file.isEmpty());
+        log.info("{}", file.getBytes());
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(file.getInputStream());
+        excelService.readExcel(bufferedInputStream, "user", ExportUserDTO.class, (dataList) -> {
+            dataList.forEach((item) -> {
+                User user = new User();
+                BeanUtils.copyProperties(item, user);
+                System.out.println("user---" + user);
+                userService.saveUnchecked(user, SystemConstants.DEFAULT_ROLE_ID);
+            });
+        });
+        return null;
     }
 }
 
