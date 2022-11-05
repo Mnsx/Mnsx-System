@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import top.mnsx.mnsx_system.component.mybatis.handler.MetaObjectHandler;
 import top.mnsx.mnsx_system.dto.UserDTO;
+import top.mnsx.mnsx_system.exception.UserNotExistException;
 import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
 
 import java.time.LocalDateTime;

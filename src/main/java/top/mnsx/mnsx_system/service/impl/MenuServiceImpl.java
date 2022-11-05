@@ -3,6 +3,7 @@ package top.mnsx.mnsx_system.service.impl;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.Menu;
 import top.mnsx.mnsx_system.dao.MenuMapper;
+import top.mnsx.mnsx_system.exception.MenuCascadeDeleteException;
 import top.mnsx.mnsx_system.exception.MenuHasExistException;
 import top.mnsx.mnsx_system.exception.MenuNotExistException;
 import top.mnsx.mnsx_system.service.MenuService;
@@ -26,15 +27,15 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Override
-    public Page<Menu> queryByPage(String menuName, Integer pageNum, Integer pageSize) {
+    public Page<Menu> queryByPage(String menuName, Integer pageNum, Long pageSize) {
         List<Menu> menus = menuMapper.selectByPage(menuName, pageNum - 1, pageSize);
         return new Page<Menu>().setData(menus).setCount((long) menus.size());
     }
 
     @Override
     public Long save(Menu menu) {
-        Long menuId = menu.getId();
-        Menu result = menuMapper.selectById(menuId);
+        String menuName = menu.getMenuName();
+        Menu result = menuMapper.selectByMenuName(menuName);
         if (result != null) {
             throw new MenuHasExistException();
         }
@@ -58,6 +59,18 @@ public class MenuServiceImpl implements MenuService {
         if (result == null) {
             throw new MenuNotExistException();
         }
+        List<Long> roleIds = menuMapper.selectRoleIdByMenuId(id);
+        if (roleIds.size() != 0) {
+            throw new MenuCascadeDeleteException();
+        }
         menuMapper.delete(id);
+    }
+
+    @Override
+    public void saveUnchecked(Menu menu) {
+        Menu result = menuMapper.selectByMenuName(menu.getMenuName());
+        if (result == null) {
+            menuMapper.insert(menu);
+        }
     }
 }

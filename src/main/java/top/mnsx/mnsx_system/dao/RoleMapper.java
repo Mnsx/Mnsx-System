@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.security.core.parameters.P;
 import top.mnsx.mnsx_system.entity.Menu;
 import top.mnsx.mnsx_system.entity.Role;
+import top.mnsx.mnsx_system.entity.User;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public interface RoleMapper {
      */
     List<Role> selectByPage(@Param("roleName") String roleName,
                             @Param("pageNum") Integer pageNum,
-                            @Param("pageSize") Integer pageSize);
+                            @Param("pageSize") Long pageSize);
 
     /**
      * 根据id查询
@@ -82,4 +83,18 @@ public interface RoleMapper {
      * @param deleteMenu 需要删除的角色菜单
      */
     void deleteRoleMenu(@Param("roleId") Long roleId, @Param("deleteMenu") List<Long> deleteMenu);
+
+    /**
+     * 通过角色编号获取用户编号
+     * @param id 角色编号
+     * @return 返回用户id集合
+     */
+    List<Long> selectUserIdByRoleId(Long id);
+
+    /**
+     * 通过roleName获取
+     * @param roleName
+     * @return
+     */
+    Role selectByRoleName(String roleName);
 }

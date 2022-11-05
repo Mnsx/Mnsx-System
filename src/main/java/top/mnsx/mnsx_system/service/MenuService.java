@@ -1,7 +1,10 @@
 package top.mnsx.mnsx_system.service;
 
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.Menu;
+
+import java.util.List;
 
 /**
  * <p>
@@ -19,7 +22,7 @@ public interface MenuService {
      * @param pageNum 页数
      * @param pageSize 每页条数
      */
-    Page<Menu> queryByPage(String menuName, Integer pageNum, Integer pageSize);
+    Page<Menu> queryByPage(String menuName, Integer pageNum, Long pageSize);
 
     /**
      * 添加菜单
@@ -39,4 +42,10 @@ public interface MenuService {
      * @param id id
      */
     void remove(Long id);
+
+    /**
+     * 添加不存在的菜单
+     * @param menu
+     */
+    void saveUnchecked(Menu menu);
 }

@@ -2,18 +2,30 @@ package top.mnsx.mnsx_system.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
+import top.mnsx.mnsx_system.constants.SystemConstants;
+import top.mnsx.mnsx_system.dto.ExportRoleDTO;
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.Role;
+import top.mnsx.mnsx_system.entity.User;
+import top.mnsx.mnsx_system.service.MenuService;
 import top.mnsx.mnsx_system.service.RoleService;
+import top.mnsx.mnsx_system.service.impl.ExcelServiceImpl;
 import top.mnsx.mnsx_system.utils.ResultMap;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +40,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/role")
 @Slf4j
+@PreAuthorize("hasAuthority('sys:role:')")
 public class RoleController {
 
     @Resource
     private RoleService roleService;
+    @Resource
+    private ExcelServiceImpl excelService;
 
     /**
      * 分页条件查询
@@ -43,7 +58,7 @@ public class RoleController {
     @GetMapping("/sys/page/{pageNum}/{pageSize}")
     public String queryInPage(@RequestBody Role role,
                               @PathVariable Integer pageNum,
-                              @PathVariable Integer pageSize) {
+                              @PathVariable Long pageSize) {
         String roleName = role.getRoleName();
         log.info("{}", roleName);
         Page<Role> page = roleService.queryInPage(roleName, pageNum, pageSize);
@@ -74,28 +89,81 @@ public class RoleController {
 
     /**
      * 删除角色信息
-     * @param id 角色编号
+     * @param ids 角色编号
      * @return void
      */
     @DeleteMapping("/sys/{id}")
-    public String remove(@PathVariable Long id) {
-        roleService.remove(id);
+    public String remove(@PathVariable Long[] ids) {
+        roleService.remove(ids);
         return JSON.toJSONString(ResultMap.ok());
     }
 
     /**
      * 更改角色对应菜单
      * @param roleId 角色编号
-     * @param menuStr 菜单编号
+     * @param json 参数
      * @return void
      */
     @PutMapping("/sys/{roleId}")
+    @SuppressWarnings("unchecked")
     public String diffMenu(@PathVariable("roleId") Long roleId,
-                           @RequestBody String[] menuStr) {
-        List<Long> menuIds = Arrays.stream(menuStr).map(Long::parseLong).collect(Collectors.toList());
-        System.out.println(menuIds);
+                           @RequestBody String json) {
+        HashMap<String, JSONArray> param = JSON.parseObject(json, HashMap.class);
+        System.out.println(param);
+        List<Long> selectMenus = param.get("selectMenus").stream().mapToLong(item ->
+            Long.parseLong((String) item)
+        ).boxed().collect(Collectors.toList());
+        List<Long> cancelMenus = param.get("cancelMenus").stream().mapToLong(item ->
+                Long.parseLong((String) item)
+        ).boxed().collect(Collectors.toList());
 
-        roleService.diffMenu(roleId, menuIds);
+        roleService.diffMenu(roleId, selectMenus, cancelMenus);
+        return JSON.toJSONString(ResultMap.ok());
+    }
+
+    /**
+     * 获取角色已经选择的菜单
+     * @param roleId 角色编号
+     * @return 返回菜单编号集合
+     */
+    @GetMapping("/sys/menu/{roleId}")
+    public String showMenuForRole(@PathVariable("roleId") Long roleId) {
+        List<Long> menuIds = roleService.queryMenuIdByRoleId(roleId);
+
+        return JSON.toJSONString(ResultMap.ok(menuIds));
+    }
+
+    /**
+     * 将角色数据导出作为excel
+     * @param pageNum 开始页数
+     * @param total 一共需要的条数
+     * @param response ioc提供
+     * @return void response返回excel
+     */
+    @GetMapping("/sys/ex/{pageNum}/{pageSize}")
+    public String exportToExcel(@PathVariable("pageNum") Integer pageNum,
+                                @PathVariable("pageSize") Long total,
+                                HttpServletResponse response) {
+//        List<ExportRoleDTO> exportInfo = roleService.getExportInfo(pageNum, total);
+        Page<Role> page = roleService.queryInPage("", pageNum, total);
+        excelService.writeExcel(response, "role", page::getData);
+        return JSON.toJSONString(ResultMap.ok());
+    }
+
+    /**
+     * 导入数据通过Excel
+     * @param file excel文件
+     * @return void
+     * @throws IOException
+     */
+    @PostMapping("/sys/im")
+    public String importFromExcel(MultipartFile file) throws IOException {
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(file.getInputStream());
+        excelService.readExcel(bufferedInputStream, "role", Role.class, (dataList) -> {
+            dataList.forEach((item) -> {
+                roleService.saveUnchecked((Role) item);
+            });
+        });
         return JSON.toJSONString(ResultMap.ok());
     }
 }

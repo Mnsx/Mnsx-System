@@ -2,13 +2,8 @@ package top.mnsx.mnsx_system.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +15,6 @@ import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.dto.UserDTO;
 import top.mnsx.mnsx_system.dto.UserSysDTO;
 import top.mnsx.mnsx_system.entity.User;
-import top.mnsx.mnsx_system.exception.UserHasExistException;
 import top.mnsx.mnsx_system.service.UserService;
 import top.mnsx.mnsx_system.service.impl.ExcelServiceImpl;
 import top.mnsx.mnsx_system.utils.ResultMap;
@@ -30,10 +24,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.Consumer;
+
+import static top.mnsx.mnsx_system.utils.SmsSender.sendSms;
 
 /**
  * <p>
@@ -59,9 +52,12 @@ public class UserController {
      */
     @GetMapping("/code/{phone}")
     public String sendCodeDemo(@PathVariable String phone) {
-        // TODO: 2022/11/2 短信服务
         String code = userService.sendCodeDemo(phone);
-        return JSON.toJSONString(ResultMap.ok(code));
+//        return JSON.toJSONString(ResultMap.ok(code));
+
+        sendSms(phone, code);
+
+        return JSON.toJSONString(ResultMap.ok());
     }
 
     /**
@@ -100,7 +96,7 @@ public class UserController {
      * @param user 用户信息
      * @return 返回用户Id
      */
-//    @PreAuthorize("hasAuthority('sys:user:')")
+    @PreAuthorize("hasAuthority('sys:user:')")
     @PostMapping("/sys/{roleId}")
     public String save(@RequestBody User user,
                        @PathVariable("roleId") Long roleId) {
@@ -115,6 +111,7 @@ public class UserController {
      * @param pageSize 展示条数
      * @return 返回数据
      */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @GetMapping("/sys/page/{pageNum}/{pageSize}")
     public String getPage(@RequestBody User user,
                           @PathVariable("pageNum") Integer pageNum,
@@ -128,6 +125,7 @@ public class UserController {
      * @param user 用户数据
      * @return void
      */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @PutMapping("/sys")
     public String modify(@RequestBody User user) {
         userService.modifyOne(user);
@@ -139,6 +137,7 @@ public class UserController {
      * @param ids 编号
      * @return void
      */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @DeleteMapping("/sys")
     public String remove(@RequestBody Long[] ids) {
         userService.removeOne(ids);
@@ -150,6 +149,7 @@ public class UserController {
      * @param roleId 角色编号
      * @return void
      */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @PutMapping("/sys/role/{userId}/{roleId}")
     public String changeUserRoleId(@PathVariable("roleId") Long roleId,
                                    @PathVariable("userId") Long userId) {
@@ -158,6 +158,14 @@ public class UserController {
         return JSON.toJSONString(ResultMap.ok());
     }
 
+    /**
+     * 将用户数据导出作为excel
+     * @param pageNum 开始页数
+     * @param total 一共需要的条数
+     * @param response ioc提供
+     * @return void response返回excel
+     */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @GetMapping("/sys/ex/{pageNum}/{pageSize}")
     public String exportToExcel(@PathVariable("pageNum") Integer pageNum,
                                 @PathVariable("pageSize") Long total,
@@ -167,20 +175,24 @@ public class UserController {
         return JSON.toJSONString(ResultMap.ok());
     }
 
+    /**
+     * 导入数据通过Excel
+     * @param file excel文件
+     * @return void
+     * @throws IOException
+     */
+    @PreAuthorize("hasAuthority('sys:user:')")
     @PostMapping("/sys/im")
     public String importFromExcel(MultipartFile file) throws IOException {
-        log.info("{}", file.isEmpty());
-        log.info("{}", file.getBytes());
         BufferedInputStream bufferedInputStream = new BufferedInputStream(file.getInputStream());
         excelService.readExcel(bufferedInputStream, "user", ExportUserDTO.class, (dataList) -> {
             dataList.forEach((item) -> {
                 User user = new User();
                 BeanUtils.copyProperties(item, user);
-                System.out.println("user---" + user);
                 userService.saveUnchecked(user, SystemConstants.DEFAULT_ROLE_ID);
             });
         });
-        return null;
+        return JSON.toJSONString(ResultMap.ok());
     }
 }
 

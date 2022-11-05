@@ -44,6 +44,16 @@ public class MyExceptionHandler {
             resultCode = ResultCode.ROLE_HAS_EXIST;
         } else if (e instanceof UserHasExistException) {
             resultCode = ResultCode.User_HAS_EXIST;
+        } else if (e instanceof MenuNotExistException) {
+            resultCode = ResultCode.MENU_NOT_EXIST;
+        } else if (e instanceof MenuHasExistException) {
+            resultCode = ResultCode.MENU_HAS_EXIST;
+        } else if (e instanceof MenuCascadeDeleteException) {
+            resultCode = ResultCode.MENU_CASCADE_DELETE_ERROR;
+        } else if (e instanceof RoleCascadeDeleteException) {
+            resultCode = ResultCode.ROLE_CASCADE_DELETE_ERROR;
+        } else if (e instanceof CurUserCanNotUpdateException) {
+            resultCode = ResultCode.CUR_USER_CAN_NOT_UPDATE;
         } else {
             resultCode = ResultCode.INNER_ERROR;
             e.printStackTrace();

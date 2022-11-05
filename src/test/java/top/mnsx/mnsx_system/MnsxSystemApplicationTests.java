@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import top.mnsx.mnsx_system.dao.UserMapper;
+import top.mnsx.mnsx_system.dto.Page;
+import top.mnsx.mnsx_system.entity.Role;
 import top.mnsx.mnsx_system.entity.User;
+import top.mnsx.mnsx_system.service.RoleService;
 import top.mnsx.mnsx_system.service.UserService;
 import top.mnsx.mnsx_system.service.impl.ExcelServiceImpl;
 import top.mnsx.mnsx_system.dto.ExportUserDTO;
@@ -48,14 +51,14 @@ class MnsxSystemApplicationTests {
 
 
     @Resource
-    private UserService userService;
+    private RoleService roleService;
 
     @Test
     public void testEasyExcel() throws FileNotFoundException {
         File file = new File("D:\\WorkSpace\\Mnsx-System\\test.xlsx");
         FileOutputStream fileOutputStream = new FileOutputStream(file);
-        List<ExportUserDTO> exportInfo = userService.getExportInfo(1, 10L);
-        EasyExcel.write(fileOutputStream, ExportUserDTO.class).sheet("user").doWrite(() -> exportInfo);
+        Page<Role> page = roleService.queryInPage("", 1, 5L);
+        EasyExcel.write(fileOutputStream, Role.class).sheet("role").doWrite(page::getData);
     }
 
     @Resource

@@ -2,6 +2,7 @@ package top.mnsx.mnsx_system.dao;
 
 import org.apache.ibatis.annotations.Param;
 import top.mnsx.mnsx_system.entity.Menu;
+import top.mnsx.mnsx_system.entity.Role;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface MenuMapper {
      */
     List<Menu> selectByPage(@Param("menuName") String menuName,
                             @Param("pageNum") Integer pageNum,
-                            @Param("pageSize") Integer pageSize);
+                            @Param("pageSize") Long pageSize);
 
     /**
      * 插入数据
@@ -60,4 +61,18 @@ public interface MenuMapper {
      * @return 菜单信息
      */
     Menu selectById(Long id);
+
+    /**
+     * 通过菜单id获取角色id集合
+     * @param id 菜单id
+     * @return 返回角色id
+     */
+    List<Long> selectRoleIdByMenuId(Long id);
+
+    /**
+     * 通过菜单名称获取
+     * @param menuName
+     * @return
+     */
+    Menu selectByMenuName(String menuName);
 }

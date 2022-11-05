@@ -1,5 +1,7 @@
 package top.mnsx.mnsx_system.service;
 
+import top.mnsx.mnsx_system.dto.ExportRoleDTO;
+import top.mnsx.mnsx_system.dto.ExportUserDTO;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.Role;
 
@@ -22,7 +24,7 @@ public interface RoleService {
      * @param pageSize 每页条数
      * @return page
      */
-    Page<Role> queryInPage(String roleName, Integer pageNum, Integer pageSize);
+    Page<Role> queryInPage(String roleName, Integer pageNum, Long pageSize);
 
     /**
      * 保存角色
@@ -39,9 +41,9 @@ public interface RoleService {
 
     /**
      * 逻辑删除
-     * @param id 编号
+     * @param ids 编号
      */
-    void remove(Long id);
+    void remove(Long[] ids);
 
     /**
      * 根据角色编号搜索角色
@@ -60,7 +62,29 @@ public interface RoleService {
     /**
      * 更改角色对应的菜单信息
      * @param roleId 角色编号
-     * @param menuId 菜单编号
+     * @param selectMenus 选中
+     * @param cancelMenus 取消
      */
-    void diffMenu(Long roleId, List<Long> menuId);
+    void diffMenu(Long roleId, List<Long> selectMenus, List<Long> cancelMenus);
+
+    /**
+     * 通过roleId后去MenuId
+     * @param roleId 角色编号
+     * @return 返回菜单编号集合
+     */
+    List<Long> queryMenuIdByRoleId(Long roleId);
+
+    /**
+     * 将数据转换成EXCEL
+     * @param pageNum 开始页数
+     * @param total 所需页数
+     * @return 返回集合
+     */
+    List<ExportRoleDTO> getExportInfo(Integer pageNum, Long total);
+
+    /**
+     * 添加不存在的role
+     * @param role
+     */
+    void saveUnchecked(Role role);
 }

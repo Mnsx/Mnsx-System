@@ -151,8 +151,10 @@ public class UserServiceImpl implements UserService {
         if (result != null) {
             throw new UserHasExistException();
         }
+        System.out.println("-------user" + user);
         if (user.getPassword() != null) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            System.out.println("password--------------" + user.getPassword());
         }
         userMapper.insertOne(user);
         this.saveUserRole(user.getId(), roleId);
@@ -215,6 +217,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeUserRoleId(Long userId, Long roleId) {
+        Long curId = ThreadLocalUtil.get().getId();
+        if (curId.equals(userId)) {
+            throw new CurUserCanNotUpdateException();
+        }
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new UserNotExistException();

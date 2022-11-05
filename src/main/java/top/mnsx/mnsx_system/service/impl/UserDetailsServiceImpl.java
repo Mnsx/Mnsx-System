@@ -1,5 +1,6 @@
 package top.mnsx.mnsx_system.service.impl;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import top.mnsx.mnsx_system.exception.PasswordNotRightException;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+
 
 /**
  * @BelongsProject: mnsx_book

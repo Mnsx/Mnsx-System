@@ -5,14 +5,17 @@ import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import top.mnsx.mnsx_system.dao.MenuMapper;
 import top.mnsx.mnsx_system.dto.UserDTO;
 import top.mnsx.mnsx_system.entity.LoginUser;
 import top.mnsx.mnsx_system.entity.User;
+import top.mnsx.mnsx_system.exception.UserNotExistException;
 import top.mnsx.mnsx_system.service.UserService;
 import top.mnsx.mnsx_system.utils.JWTUtil;
 import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
@@ -25,11 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static top.mnsx.mnsx_system.constants.RedisConstants.LOGIN_USER_KEY;
-import static top.mnsx.mnsx_system.constants.RedisConstants.LOGIN_USER_TTL;
+import static top.mnsx.mnsx_system.constants.RedisConstants.*;
 
 /**
  * @BelongsProject: mnsx_book
@@ -43,6 +46,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private UserService userService;
+    @Resource
+    private MenuMapper menuMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -76,6 +81,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 将用户放入LoginUser
         Long id = loginUser.getUser().getId();
         User user = userService.queryById(id);
+        if (user == null) {
+            WebUtil.renderString(response, "用户不存在");
+            return;
+        }
         UserDTO userDTO = new UserDTO();
         BeanUtil.copyProperties(user, userDTO);
         ThreadLocalUtil.add(userDTO);

@@ -24,6 +24,12 @@ public enum ResultCode {
     // 角色
     ROLE_HAS_EXIST(5200, "角色已经存在"),
     ROLE_NOT_EXIST(5201, "角色不存在"),
+    ROLE_CASCADE_DELETE_ERROR(5202, "角色级联删除失败"),
+    CUR_USER_CAN_NOT_UPDATE(5203, "当前使用的用户不允许修改"),
+    // 菜单
+    MENU_CASCADE_DELETE_ERROR(5300, "菜单级联删除失败"),
+    MENU_HAS_EXIST(5301, "菜单已经存在"),
+    MENU_NOT_EXIST(5302, "菜单不存在"),
     // 服务器内部问题
     INNER_ERROR(500, "服务器内部问题，请联系管理员");
 

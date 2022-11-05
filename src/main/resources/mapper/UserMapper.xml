@@ -13,7 +13,7 @@
         <if test="email != null and email != ''">
             , email
         </if>
-        <if test="password != null and email != ''">
+        <if test="password != null and password != ''">
             , password
         </if>
         <if test="icon != null and icon != ''">
@@ -27,7 +27,7 @@
         <if test="email != null and email != ''">
             , #{email}
         </if>
-        <if test="password != null and email != ''">
+        <if test="password != null and password != ''">
             , #{password}
         </if>
         <if test="icon != null and icon != ''">

@@ -109,6 +109,30 @@
             tb_menu
         where
             is_deleted = 0
+          and
+            id = #{id}
+    </select>
+    <select id="selectRoleIdByMenuId" resultType="java.lang.Long">
+        select
+            id
+        from
+            tb_role_menu as trm
+                right join
+            tb_role as tr
+            on
+                trm.role_id = tr.id
+        where
+            tr.is_deleted = 0
+    </select>
+    <select id="selectByMenuName" resultMap="MenuMap">
+        select
+            id, menu_name, content, router, role_key, status
+        from
+            tb_menu
+        where
+            is_deleted = 0
+          and
+            menu_name = #{menuName}
     </select>
 
 

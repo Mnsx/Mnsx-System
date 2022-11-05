@@ -70,7 +70,7 @@
         where
         role_id = #{roleId}
         and
-        <foreach collection="deleteMenu" item="item" separator="and">
+        <foreach collection="deleteMenu" item="item" separator="or">
             menu_id = #{item}
         </foreach>
     </delete>
@@ -123,6 +123,28 @@
                  m.id = rm.menu_id
         where
             role_id = #{roleId}
+          and
+            is_deleted = 0
+    </select>
+    <select id="selectUserIdByRoleId" resultType="long">
+        select
+            id
+        from tb_user
+                 right join
+             tb_user_role tur
+             on tb_user.id = tur.user_id
+        where
+            user_id = #{userId}
+          and
+            is_deleted = 0
+    </select>
+    <select id="selectByRoleName" resultMap="roleMap">
+        select
+            id, role_name, content, status
+        from
+            tb_role
+        where
+            role_name = #{roleName}
           and
             is_deleted = 0
     </select>
