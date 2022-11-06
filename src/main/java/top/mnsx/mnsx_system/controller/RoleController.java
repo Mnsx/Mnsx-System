@@ -50,17 +50,14 @@ public class RoleController {
 
     /**
      * 分页条件查询
-     * @param role 条件
      * @param pageNum 当前页数
      * @param pageSize 每页条数
      * @return page
      */
-    @GetMapping("/sys/page/{pageNum}/{pageSize}")
-    public String queryInPage(@RequestBody Role role,
+    @GetMapping("/sys/page/{pageNum}/{pageSize}/{roleName}")
+    public String queryInPage(@PathVariable String roleName,
                               @PathVariable Integer pageNum,
                               @PathVariable Long pageSize) {
-        String roleName = role.getRoleName();
-        log.info("{}", roleName);
         Page<Role> page = roleService.queryInPage(roleName, pageNum, pageSize);
         return JSON.toJSONString(ResultMap.ok(page));
     }

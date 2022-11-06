@@ -112,7 +112,7 @@ public class UserController {
      * @return 返回数据
      */
     @PreAuthorize("hasAuthority('sys:user:')")
-    @GetMapping("/sys/page/{pageNum}/{pageSize}")
+    @PostMapping("/sys/page/{pageNum}/{pageSize}")
     public String getPage(@RequestBody User user,
                           @PathVariable("pageNum") Integer pageNum,
                           @PathVariable("pageSize") Long pageSize) {
