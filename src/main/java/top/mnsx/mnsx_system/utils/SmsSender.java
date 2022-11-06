@@ -25,8 +25,8 @@ public class SmsSender {
 
 
     // 阿里云配置
-    private static final String accessKeyId = "LTAI5tMQ5JPC5aVJzVgWuNv2";
-    private static final String accessKeySecret = "dPHzgHXcqkBi6CPEhrINxdBX9mHRBI";
+    private static final String accessKeyId = "";
+    private static final String accessKeySecret = "";
     // 签名和模板
     private static final String signName = "mnsx";
     private static final String templateCode = "SMS_254825609";
