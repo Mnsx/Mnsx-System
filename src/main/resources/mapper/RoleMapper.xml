@@ -148,4 +148,15 @@
           and
             is_deleted = 0
     </select>
+    <select id="selectCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        tb_role
+        where
+        <if test="roleName != null and roleName != ''">
+            role_name = #{roleName} and
+        </if>
+        is_deleted = 0
+    </select>
 </mapper>

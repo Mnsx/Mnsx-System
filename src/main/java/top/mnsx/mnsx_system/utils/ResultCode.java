@@ -30,6 +30,10 @@ public enum ResultCode {
     MENU_CASCADE_DELETE_ERROR(5300, "菜单级联删除失败"),
     MENU_HAS_EXIST(5301, "菜单已经存在"),
     MENU_NOT_EXIST(5302, "菜单不存在"),
+    // 文件
+    FILE_HAS_EXIST(5400, "文件已经存在"),
+    FILE_NOT_EXIST(5401, "文件不存在"),
+    MAX_UPLOAD_SIZE(5402, "文件超过最大上传大小"),
     // 服务器内部问题
     INNER_ERROR(500, "服务器内部问题，请联系管理员");
 

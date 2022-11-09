@@ -31,7 +31,7 @@ public interface MenuMapper {
      * @return 返回数据
      */
     List<Menu> selectByPage(@Param("menuName") String menuName,
-                            @Param("pageNum") Integer pageNum,
+                            @Param("pageNum") Long pageNum,
                             @Param("pageSize") Long pageSize);
 
     /**
@@ -75,4 +75,11 @@ public interface MenuMapper {
      * @return
      */
     Menu selectByMenuName(String menuName);
+
+    /**
+     * 查询数量
+     * @param menuName 条件
+     * @return 数量
+     */
+    Long selectCount(String menuName);
 }

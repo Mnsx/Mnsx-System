@@ -46,7 +46,7 @@ public interface RoleMapper {
      * @return 数据
      */
     List<Role> selectByPage(@Param("roleName") String roleName,
-                            @Param("pageNum") Integer pageNum,
+                            @Param("pageNum") Long pageNum,
                             @Param("pageSize") Long pageSize);
 
     /**
@@ -97,4 +97,11 @@ public interface RoleMapper {
      * @return
      */
     Role selectByRoleName(String roleName);
+
+    /**
+     * 获取查询总数
+     * @param roleName 条件
+     * @return 数量
+     */
+    Long selectCount(String roleName);
 }

@@ -134,6 +134,17 @@
           and
             menu_name = #{menuName}
     </select>
+    <select id="selectCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        tb_menu
+        where
+        <if test="menuName != null and menuName != ''">
+            menu_name = #{menuName} and
+        </if>
+        is_deleted = 0
+    </select>
 
 
 </mapper>

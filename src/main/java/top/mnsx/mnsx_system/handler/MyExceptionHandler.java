@@ -8,6 +8,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import top.mnsx.mnsx_system.exception.*;
 import top.mnsx.mnsx_system.utils.ResultCode;
 import top.mnsx.mnsx_system.utils.ResultMap;
@@ -54,6 +55,12 @@ public class MyExceptionHandler {
             resultCode = ResultCode.ROLE_CASCADE_DELETE_ERROR;
         } else if (e instanceof CurUserCanNotUpdateException) {
             resultCode = ResultCode.CUR_USER_CAN_NOT_UPDATE;
+        } else if (e instanceof FileNotExistException) {
+            resultCode = ResultCode.FILE_NOT_EXIST;
+        } else if (e instanceof FileHasExistException) {
+            resultCode = ResultCode.FILE_HAS_EXIST;
+        } else if (e instanceof MaxUploadSizeExceededException) {
+            resultCode = ResultCode.MAX_UPLOAD_SIZE;
         } else {
             resultCode = ResultCode.INNER_ERROR;
             e.printStackTrace();

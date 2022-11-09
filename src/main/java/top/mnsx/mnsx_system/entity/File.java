@@ -1,42 +1,31 @@
 package top.mnsx.mnsx_system.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
-import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import top.mnsx.mnsx_system.component.mybatis.annotation.AssignId;
 import top.mnsx.mnsx_system.component.mybatis.annotation.TableFill;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
- * <p>
- * 
- * </p>
- *
- * @author Mnsx_x
- * @since 2022-10-22
+ * @BelongsProject: mnsx_system
+ * @User: Mnsx_x
+ * @CreateTime: 2022/11/7 16:47
+ * @Description: 文件信息类
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class User implements Serializable {
-
+public class File implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @AssignId
     private Long id;
-
-    private String phone;
-
-    private String email;
-
-    private String nickName;
-
-    private String password;
-
-    private String icon;
-
-    private Integer status;
+    private String fileName;
+    private String format;
+    private Double size;
+    private Integer isDeleted;
+    private String location;
 
     @TableFill(insertFlag = true, insertMethod = "getUser")
     private Long createUser;

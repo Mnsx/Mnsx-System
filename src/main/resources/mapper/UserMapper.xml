@@ -101,8 +101,6 @@
         where
             phone = #{phone}
           and
-            status = 0
-          and
             is_deleted = 0
     </select>
     <select id="selectById" resultMap="userMap">
@@ -112,8 +110,6 @@
             tb_user
         where
             id = #{id}
-          and
-            status = 0
           and
             is_deleted = 0
     </select>
@@ -137,5 +133,22 @@
         update_time desc
         limit
         ${pageNum}, #{pageSize}
+    </select>
+    <select id="selectCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        tb_user
+        where
+        is_deleted = 0
+        <if test="user.phone != null and user.phone != ''">
+            and phone = #{user.phone}
+        </if>
+        <if test="user.email != null and user.email != ''">
+            and email = #{user.email}
+        </if>
+        <if test="user.nickName != null and user.nickName != ''">
+            and nick_name = #{user.nickName}
+        </if>
     </select>
 </mapper>

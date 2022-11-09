@@ -75,14 +75,6 @@ public interface RoleService {
     List<Long> queryMenuIdByRoleId(Long roleId);
 
     /**
-     * 将数据转换成EXCEL
-     * @param pageNum 开始页数
-     * @param total 所需页数
-     * @return 返回集合
-     */
-    List<ExportRoleDTO> getExportInfo(Integer pageNum, Long total);
-
-    /**
      * 添加不存在的role
      * @param role
      */

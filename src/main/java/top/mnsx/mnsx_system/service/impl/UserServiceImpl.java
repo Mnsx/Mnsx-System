@@ -168,7 +168,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserSysDTO> page(User user, Integer pageNum, Long pageSize) {
-        List<User> users = userMapper.selectByPage(user, pageNum - 1, pageSize);
+        List<User> users = userMapper.selectByPage(user, pageSize * (pageNum - 1), pageSize);
+        Long count = userMapper.selectCount(user);
         List<UserSysDTO> userSysDTOS = users.stream().map((item) -> {
             UserSysDTO userSysDTO = new UserSysDTO();
             Role role = roleService.queryByUserId(item.getId());
@@ -179,12 +180,12 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
         return new Page<UserSysDTO>()
                 .setData(userSysDTOS)
-                .setCount((long) users.size());
+                .setCount(count);
     }
 
     @Override
     public List<ExportUserDTO> getExportInfo(Integer pageNum, Long total) {
-        List<User> users = userMapper.selectByPage(new User(), pageNum - 1, total);
+        List<User> users = userMapper.selectByPage(new User(), (long) pageNum - 1, total);
         return users.stream().map((item) -> {
                 ExportUserDTO exportUserVO = new ExportUserDTO();
                 BeanUtils.copyProperties(item, exportUserVO);

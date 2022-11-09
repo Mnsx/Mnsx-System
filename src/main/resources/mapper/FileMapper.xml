@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.mnsx.mnsx_system.dao.FileMapper">
+    <resultMap id="FileMap" type="file">
+        <id column="id" property="id"/>
+        <result column="file_name" property="fileName"/>
+    </resultMap>
+
+    <insert id="insertOne" parameterType="file" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            tb_file (id, file_name, format, size, location, create_user, create_time, update_user, update_time)
+        values
+            (#{id}, #{fileName}, #{format}, #{size}, #{location}, #{createUser}, #{createTime}, #{updateUser}, #{updateTime})
+    </insert>
+    <update id="updateOne">
+        update
+        tb_file
+        set
+        <if test="fileName != null and fileName != ''">
+            file_name = #{fileName},
+        </if>
+        <if test="format != null and format != ''">
+            format = #{format},
+        </if>
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        where
+        id = #{id}
+        and
+        is_deleted = 0
+    </update>
+
+    <delete id="deleteBath">
+        update
+        tb_file
+        set
+        is_deleted = 1
+        where
+        <foreach collection="ids" item="id" separator="or">
+            id = #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPage" resultMap="FileMap">
+        select
+        file_name, format, location, size
+        from
+        tb_file
+        where
+        is_deleted = 0
+        <if test="file.fileName != null and file.fileName != ''">
+            and file_name = #{file.fileName}
+        </if>
+        <if test="file.format != null and file.format != ''">
+            and format = #{file.format}
+        </if>
+        order by
+        size, update_time desc
+        limit
+        #{pageNum}, #{pageSize}
+    </select>
+    <select id="selectCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        tb_file
+        where
+        is_deleted = 0
+        <if test="file.fileName != null and file.fileName != ''">
+            and file_name = #{file.fileName}
+        </if>
+        <if test="file.format != null and file.format != ''">
+            and format = #{file.format}
+        </if>
+    </select>
+    <select id="selectById" resultMap="FileMap">
+        select
+            id, file_name, format, size, location
+        from
+            tb_file
+        where
+            id = #{id}
+          and
+            is_deleted = 0
+    </select>
+</mapper>

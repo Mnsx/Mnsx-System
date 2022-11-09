@@ -45,7 +45,7 @@ public interface UserMapper {
      * @return
      */
     List<User> selectByPage(@Param("user") User user,
-                            @Param("pageNum") Integer pageNum,
+                            @Param("pageNum") Long pageNum,
                             @Param("pageSize") Long pageSize);
 
     /**
@@ -74,4 +74,11 @@ public interface UserMapper {
      * @param roleId 角色信息
      */
     void insertUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    /**
+     * 获取查询总数
+     * @param user 条件
+     * @return 返回页数
+     */
+    Long selectCount(@Param("user") User user);
 }

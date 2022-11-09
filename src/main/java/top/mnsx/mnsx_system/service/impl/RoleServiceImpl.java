@@ -36,8 +36,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Page<Role> queryInPage(String roleName, Integer pageNum, Long pageSize) {
-        List<Role> roles = roleMapper.selectByPage(roleName, pageNum - 1, pageSize);
-        return new Page<Role>().setData(roles).setCount((long) roles.size());
+        List<Role> roles = roleMapper.selectByPage(roleName, pageSize * (pageNum - 1), pageSize);
+        Long count = roleMapper.selectCount(roleName);
+        return new Page<Role>().setData(roles).setCount(count);
     }
 
     @Override
@@ -110,16 +111,6 @@ public class RoleServiceImpl implements RoleService {
     public List<Long> queryMenuIdByRoleId(Long roleId) {
         List<Menu> menus = roleMapper.selectRoleMenuByRoleId(roleId);
         return menus.stream().map(Menu::getId).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ExportRoleDTO> getExportInfo(Integer pageNum, Long total) {
-        List<Role> roles = roleMapper.selectByPage("", pageNum - 1, total);
-        return roles.stream().map((item) -> {
-            ExportRoleDTO exportRoleVO = new ExportRoleDTO();
-            BeanUtils.copyProperties(item, exportRoleVO);
-            return exportRoleVO;
-        }).collect(Collectors.toList());
     }
 
     @Override
