@@ -45,7 +45,7 @@
 
     <select id="selectByPage" resultMap="FileMap">
         select
-        file_name, format, location, size
+        id, file_name, format, location, size
         from
         tb_file
         where

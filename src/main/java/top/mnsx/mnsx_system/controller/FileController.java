@@ -11,6 +11,8 @@ import top.mnsx.mnsx_system.service.FileService;
 import top.mnsx.mnsx_system.utils.ResultMap;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @BelongsProject: mnsx_system
@@ -49,6 +51,7 @@ public class FileController {
     @PostMapping("/sys")
     public String save(@RequestParam("fileInfo") String fileInfoStr, @RequestParam("file") MultipartFile multipartFile) {
         File file = JSON.parseObject(fileInfoStr, File.class);
+        file.setSize((double) multipartFile.getSize());
         Long fileId = fileService.save(file, multipartFile);
         return JSON.toJSONString(ResultMap.ok(fileId));
     }

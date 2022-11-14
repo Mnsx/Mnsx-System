@@ -36,7 +36,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Page<Role> queryInPage(String roleName, Integer pageNum, Long pageSize) {
-        List<Role> roles = roleMapper.selectByPage(roleName, pageSize * (pageNum - 1), pageSize);
+        System.out.println("-------------roleName" + roleName);
+        List<Role> roles = roleMapper.selectByPage(roleName, pageNum - 1L, pageSize);
         Long count = roleMapper.selectCount(roleName);
         return new Page<Role>().setData(roles).setCount(count);
     }

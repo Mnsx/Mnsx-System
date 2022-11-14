@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
         if (Objects.isNull(authenticate)) {
-            throw new LoginFailException();
+            throw new PasswordNotRightException();
         }
 
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();

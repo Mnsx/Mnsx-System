@@ -16,7 +16,7 @@ public enum ResultCode {
     PHONE_NOT_FORMAT(5002, "手机号码格式错误"),
     LOGIN_FAIL(5003, "登录失败，请输入验证码或密码"),
     CODE_NOT_RIGHT(5004, "验证码错误"),
-    PASSWORD_NOT_RIGHT(5005, "密码错误"),
+    PASSWORD_NOT_RIGHT(5005, "账号不存在或者密码错误"),
     ILLEGAL_TOKEN(5006, "token非法"),
     // 用户
     USER_NOT_EXIST(5100, "用户不存在"),
@@ -34,6 +34,7 @@ public enum ResultCode {
     FILE_HAS_EXIST(5400, "文件已经存在"),
     FILE_NOT_EXIST(5401, "文件不存在"),
     MAX_UPLOAD_SIZE(5402, "文件超过最大上传大小"),
+    FILE_DELETE_FAIL(5403, "文件删除失败"),
     // 服务器内部问题
     INNER_ERROR(500, "服务器内部问题，请联系管理员");
 

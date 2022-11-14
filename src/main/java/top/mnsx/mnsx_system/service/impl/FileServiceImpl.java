@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.mnsx.mnsx_system.dao.FileMapper;
 import top.mnsx.mnsx_system.dto.Page;
 import top.mnsx.mnsx_system.entity.File;
+import top.mnsx.mnsx_system.exception.FileDeleteFailException;
 import top.mnsx.mnsx_system.exception.FileNotExistException;
 import top.mnsx.mnsx_system.service.FileService;
 import top.mnsx.mnsx_system.utils.ImageUtil;
@@ -12,6 +13,8 @@ import top.mnsx.mnsx_system.utils.ThreadLocalUtil;
 
 import javax.annotation.Resource;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -73,6 +76,13 @@ public class FileServiceImpl implements FileService {
             File file = fileMapper.selectById(item);
             if (file == null) {
                 throw new FileNotExistException();
+            }
+            java.io.File curFile = new java.io.File(file.getLocation());
+            if (curFile.exists()) {
+                boolean ifDeleted = curFile.delete();
+                if (!ifDeleted) {
+                    throw new FileDeleteFailException();
+                }
             }
         });
         fileMapper.deleteBath(ids);

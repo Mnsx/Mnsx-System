@@ -40,10 +40,11 @@ public class MenuController {
     @Resource
     private ExcelServiceImpl excelService;
 
-    @GetMapping("/sys/page/{pageNum}/{pageSize}/{menuName}")
-    public String queryByPage(@PathVariable String menuName,
+    @PutMapping("/sys/page/{pageNum}/{pageSize}")
+    public String queryByPage(@RequestBody String menuName,
                               @PathVariable("pageNum") Integer pageNum,
                               @PathVariable("pageSize") Long pageSize) {
+        menuName = JSON.parseObject(menuName, String.class);
         Page<Menu> page = menuService.queryByPage(menuName, pageNum, pageSize);
         return JSON.toJSONString(ResultMap.ok(page));
     }

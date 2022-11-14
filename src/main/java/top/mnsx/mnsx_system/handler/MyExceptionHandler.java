@@ -31,9 +31,9 @@ public class MyExceptionHandler {
             resultCode = ResultCode.PHONE_NOT_FORMAT;
         } else if (e instanceof CodeNotRightException) {
             resultCode = ResultCode.CODE_NOT_RIGHT;
-        } else if (e instanceof LoginFailException || e instanceof InternalAuthenticationServiceException) {
+        } else if (e instanceof LoginFailException) {
             resultCode = ResultCode.LOGIN_FAIL;
-        } else if (e instanceof PasswordNotRightException || e instanceof BadCredentialsException) {
+        } else if (e instanceof PasswordNotRightException || e instanceof BadCredentialsException || e instanceof InternalAuthenticationServiceException) {
             resultCode = ResultCode.PASSWORD_NOT_RIGHT;
         } else if (e instanceof AccessDeniedException) {
             resultCode = ResultCode.PERMISSION_NOT_ENOUGH;
@@ -61,6 +61,8 @@ public class MyExceptionHandler {
             resultCode = ResultCode.FILE_HAS_EXIST;
         } else if (e instanceof MaxUploadSizeExceededException) {
             resultCode = ResultCode.MAX_UPLOAD_SIZE;
+        } else if (e instanceof FileDeleteFailException) {
+            resultCode = ResultCode.FILE_DELETE_FAIL;
         } else {
             resultCode = ResultCode.INNER_ERROR;
             e.printStackTrace();

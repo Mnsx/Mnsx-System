@@ -28,7 +28,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Page<Menu> queryByPage(String menuName, Integer pageNum, Long pageSize) {
-        List<Menu> menus = menuMapper.selectByPage(menuName, pageSize * (pageNum - 1), pageSize);
+        List<Menu> menus = menuMapper.selectByPage(menuName, pageNum - 1L, pageSize);
         Long count = menuMapper.selectCount(menuName);
         return new Page<Menu>().setData(menus).setCount(count);
     }

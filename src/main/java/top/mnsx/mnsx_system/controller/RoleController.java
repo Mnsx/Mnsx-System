@@ -54,10 +54,11 @@ public class RoleController {
      * @param pageSize 每页条数
      * @return page
      */
-    @GetMapping("/sys/page/{pageNum}/{pageSize}/{roleName}")
-    public String queryInPage(@PathVariable String roleName,
+    @PutMapping("/sys/page/{pageNum}/{pageSize}")
+    public String queryInPage(@RequestBody String roleName,
                               @PathVariable Integer pageNum,
                               @PathVariable Long pageSize) {
+        roleName = JSON.parseObject(roleName, String.class);
         Page<Role> page = roleService.queryInPage(roleName, pageNum, pageSize);
         return JSON.toJSONString(ResultMap.ok(page));
     }
